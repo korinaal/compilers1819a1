@@ -15,9 +15,18 @@ def getchar(text,pos):
 	
 	# **Σημείο #3**: Προαιρετικά, προσθέστε τις δικές σας ομαδοποιήσεις
 	
-	if c>='0' and c<='9': return 'DIGIT'	# 0..9 grouped together
-	
-	if c=='.': return 'DOT'	# dot as a category by itself
+	if c == '0':
+		return 'DIGIT_EQUAL_TO_0'
+	if c >= '1' and c <= '2':
+		return 'DIGIT_1_TO_2'
+	if c == '3':
+		return 'DIGIT_EQUAL_TO_3'
+	if c == '4':
+		return 'DIGIT_EQUAL_TO_4'
+	if c == '5':
+		return 'DIGIT_EQUAL_TO_5'
+	if c >= '6' and c <= '9':
+		return 'DIGIT_6_TO_9'
 	
 	return c	# anything else
 	
@@ -60,17 +69,24 @@ def scan(text,transitions,accepts):
 			
 	
 # **Σημείο #1**: Αντικαταστήστε με το δικό σας λεξικό μεταβάσεων
-transitions = { 's0': { 'DIGIT':'s1' },
-       			's1': { 'DIGIT':'s1','DOT':'s2' },
-       			's2': { 'DIGIT':'s3' },
-       			's3': { 'DIGIT':'s3' }       
-     		  } 
-
+transitions = {'s0': {'DIGIT_EQUAL_TO_0': 's1', 'DIGIT_1_TO_2': 's1', 'DIGIT_EQUAL_TO_3': 's4'},
+               's1': {'DIGIT_EQUAL_TO_0': 's2', 'DIGIT_1_TO_2': 's2', 'DIGIT_EQUAL_TO_3': 's2', 'DIGIT_EQUAL_TO_4': 's2', 'DIGIT_EQUAL_TO_5': 's2', 'DIGIT_6_TO_9': 's2'},
+               's2': {'DIGIT_EQUAL_TO_0': 's3'},
+               's4': {'DIGIT_EQUAL_TO_0': 's5', 'DIGIT_1_TO_2': 's5', 'DIGIT_EQUAL_TO_3': 's5', 'DIGIT_EQUAL_TO_4': 's5', 'DIGIT_EQUAL_TO_5': 's5'},
+               's5': {'DIGIT_EQUAL_TO_0': 's3'},
+               's3': {'DIGIT_EQUAL_TO_0': 's6', 'DIGIT_1_TO_2': 's6', 'DIGIT_EQUAL_TO_3': 's6', 'DIGIT_EQUAL_TO_4': 's6', 'DIGIT_EQUAL_TO_5': 's6', 'DIGIT_6_TO_9': 's6'},
+               's6': {'DIGIT_EQUAL_TO_0': 's8', 'DIGIT_1_TO_2': 's8', 'DIGIT_EQUAL_TO_3': 's8', 'DIGIT_EQUAL_TO_4': 's8', 'DIGIT_EQUAL_TO_5': 's8', 'DIGIT_6_TO_9': 's8'},
+               's8': {'G': 's9', 'K': 's12', 'M': 's14'},
+               's9': {'DIGIT_EQUAL_TO_0': 's10', 'DIGIT_1_TO_2': 's10', 'DIGIT_EQUAL_TO_3': 's10', 'DIGIT_EQUAL_TO_4': 's10', 'DIGIT_EQUAL_TO_5': 's10', 'DIGIT_6_TO_9': 's10'},
+               's10': {'DIGIT_EQUAL_TO_0': 's11', 'DIGIT_1_TO_2': 's11', 'DIGIT_EQUAL_TO_3': 's11', 'DIGIT_EQUAL_TO_4': 's11', 'DIGIT_EQUAL_TO_5': 's11', 'DIGIT_6_TO_9': 's11'},
+               's11': {'K': 's12', 'M': 's14'},
+               's12': {'T': 's13'},
+               's14': {'P': 's15'},
+               's15': {'S': 's13'}
+               }
 # **Σημείο #2**: Αντικαταστήστε με το δικό σας λεξικό καταστάσεων αποδοχής
-accepts = { 's1':'INT_TOKEN',
-       		's3':'FLOAT_TOKEN'	
-     	  }
-
+accepts = {'s13': 'WIND_TOKEN'
+           }
 
 # get a string from input
 text = input('give some input>')
